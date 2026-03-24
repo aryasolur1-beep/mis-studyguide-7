@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MIS Chapter 7 Study Guide</title>
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;600&family=JetBrains+Mono&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0B0E14;
+            --surface: #161B22;
+            --accent: #58A6FF;
+            --text-main: #E6EDF3;
+            --text-dim: #8B949E;
+            --correct: #238636;
+            --wrong: #DA3633;
+            --border: #30363D;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Lexend', sans-serif;
+            background-color: var(--bg);
+            color: var(--text-main);
+            display: flex;
+            min-height: 100vh;
+        }
+
+        nav {
+            width: 260px;
+            background: var(--surface);
+            border-right: 1px solid var(--border);
+            padding: 2rem 1.5rem;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        nav h1 {
+            font-size: 1.5rem;
+            margin-bottom: 2rem;
+            color: var(--accent);
+        }
+
+        .nav-btn {
+            display: block;
+            width: 100%;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-main);
+            border-radius: 8px;
+            cursor: pointer;
+            text-align: left;
+            transition: 0.3s;
+        }
+
+        .nav-btn.active {
+            background: var(--accent);
+            color: var(--bg);
+            border-color: var(--accent);
+        }
+
+        main {
+            margin-left: 260px;
+            padding: 3rem;
+            width: 100%;
+            max-width: 1100px;
+        }
+
+        .section { display: none; }
+        .section.active { display: block; }
+
+        .search-bar {
+            width: 100%;
+            padding: 1rem;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: white;
+            margin-bottom: 2rem;
+        }
+
+        .vocab-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .vocab-card h3 {
+            color: var(--accent);
+            margin-bottom: 1rem;
+            font-size: 1.4rem;
+        }
+
+        .label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            display: block;
+            margin-top: 1rem;
+        }
+
+        .example-box {
+            background: rgba(88, 166, 255, 0.05);
+            border-left: 3px solid var(--accent);
+            padding: 1rem;
+            margin-top: 1rem;
+            font-style: italic;
+        }
+
+        .q-card {
+            background: var(--surface);
+            padding: 2rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            border: 1px solid var(--border);
+        }
+
+        .q-number {
+            color: var(--accent);
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .scenario {
+            line-height: 1.65;
+            margin-bottom: 1rem;
+            color: var(--text-main);
+        }
+
+        .question-line {
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+        .option {
+            display: block;
+            width: 100%;
+            padding: 1rem;
+            margin-top: 0.6rem;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            color: var(--text-main);
+            border-radius: 6px;
+            cursor: pointer;
+            text-align: left;
+            transition: 0.2s;
+        }
+
+        .option:hover {
+            border-color: var(--accent);
+        }
+
+        .option.correct {
+            background: var(--correct);
+            border-color: var(--correct);
+        }
+
+        .option.wrong {
+            background: var(--wrong);
+            border-color: var(--wrong);
+        }
+
+        .answer-block {
+            margin-top: 1rem;
+            padding: 1rem;
+            border-radius: 6px;
+            display: none;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            border: 1px solid var(--border);
+        }
+
+        .answer-block strong {
+            color: var(--accent);
+        }
+
+        @media (max-width: 768px) {
+            nav {
+                width: 100%;
+                height: auto;
+                position: relative;
+            }
+
+            main {
+                margin-left: 0;
+                padding: 1.5rem;
+            }
+
+            body {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<nav>
+    <h1>MIS Chapter 7</h1>
+    <button class="nav-btn active" onclick="showTab('vocab', this)">Terms</button>
+    <button class="nav-btn" onclick="showTab('quiz', this)">Practice Quiz</button>
+    <div style="margin-top: 2rem; font-size: 0.8rem; color: var(--text-dim); line-height: 1.5;">
+        Focus: software, enterprise systems, databases, middleware, distributed computing, and interfaces.
+    </div>
+</nav>
+
+<main>
+    <section id="vocab" class="section active">
+        <input type="text" class="search-bar" id="search" placeholder="Search Chapter 7 terms..." onkeyup="filterVocab()">
+        <div id="vocab-container"></div>
+    </section>
+
+    <section id="quiz" class="section">
+        <div id="quiz-container"></div>
+    </section>
+</main>
+
+<script>
+const vocabData = [
+    {
+        term: "Application",
+        exact: "Software that performs a specific task for users or organizations, such as creating documents, processing sales, or managing records.",
+        simple: "A program that helps people do a job or complete a task.",
+        example: "A student uses Excel to track club expenses. Excel is the application doing the work."
+    },
+    {
+        term: "Business Intelligence (BI) systems",
+        exact: "Information systems that collect, process, and present data to help managers analyze performance and make decisions.",
+        simple: "Systems that turn data into useful reports and dashboards.",
+        example: "A retail manager uses a dashboard to compare weekly sales, returns, and profit by store."
+    },
+    {
+        term: "Customer relationship management (CRM) systems",
+        exact: "Systems that manage a company's interactions with current and potential customers across marketing, sales, and service.",
+        simple: "Systems that help a business track and improve customer relationships.",
+        example: "A small business stores customer contacts, purchase history, and support requests in one CRM."
+    },
+    {
+        term: "Database management system (DBMS)",
+        exact: "Software that creates, stores, organizes, secures, and retrieves data from databases.",
+        simple: "Software that manages data in a database.",
+        example: "A university app pulls student records from a database that is controlled by a DBMS."
+    },
+    {
+        term: "Distributed computing",
+        exact: "A model in which computing work is spread across multiple computers or devices that coordinate over a network.",
+        simple: "Many computers working together on one larger job.",
+        example: "A streaming service uses many servers in different places so users can watch videos smoothly."
+    },
+    {
+        term: "Enterprise resource planning (ERP) systems",
+        exact: "Integrated systems that connect major business processes such as accounting, operations, inventory, and HR into one shared platform.",
+        simple: "A system that links core parts of a business together.",
+        example: "When a sale is made, inventory, accounting, and purchasing are updated inside the same ERP."
+    },
+    {
+        term: "Konana's Model of the Software Ecosystem",
+        exact: "A model that explains software as part of a broader ecosystem of users, developers, platforms, complements, and networked relationships.",
+        simple: "A way to think about how software works with other players, not by itself.",
+        example: "A phone platform becomes stronger when more app makers, users, and service partners join the ecosystem."
+    },
+    {
+        term: "Middleware",
+        exact: "Software that connects different applications, systems, or databases so they can communicate and exchange data.",
+        simple: "Software that helps other software talk to each other.",
+        example: "A school website sends payment data to the billing system through middleware."
+    },
+    {
+        term: "Operating systems",
+        exact: "Core software that manages hardware resources and provides services for applications.",
+        simple: "The main software that runs a computer or phone and lets apps work.",
+        example: "Windows, macOS, iOS, and Android are operating systems."
+    },
+    {
+        term: "Supply Chain Management (SCM) systems",
+        exact: "Systems that coordinate the flow of materials, information, and products across suppliers, manufacturers, warehouses, and retailers.",
+        simple: "Systems that help businesses move products from suppliers to customers.",
+        example: "An apparel brand uses SCM software to monitor factory output, shipments, and store inventory."
+    },
+    {
+        term: "User Interface and graphical user interface (GUI)",
+        exact: "The user interface is the way a person interacts with a system; a GUI is a visual interface that uses windows, icons, menus, and buttons.",
+        simple: "The part of a system people see and use, especially visual screens and buttons.",
+        example: "A food delivery app uses a GUI so customers can tap pictures, menus, and maps."
+    }
+];
+
+const quizData = [
+    {
+        scenario: "A student organization at UT sells shirts online. Right now, one officer tracks orders in Google Sheets, another answers customer emails, and a third stores payment notes in a separate app. The group keeps missing refund requests because customer details are scattered across tools. They want one system that keeps contact history, orders, and service issues together.",
+        question: "Which system would MOST directly solve the group's problem?",
+        options: [
+            "A. A CRM system that stores customer interactions in one place",
+            "B. An SCM system that tracks supplier and shipping flows",
+            "C. An operating system that manages laptop memory and files",
+            "D. A DBMS that only stores raw data without process tools"
+        ],
+        correct: 0,
+        explanation: "A CRM system is best because the problem is about managing customer contacts, orders, and service issues together. B is wrong because SCM focuses on product flow through the supply chain, not relationship history. C is wrong because an operating system manages device resources, not customer workflows. D is tempting, but a DBMS alone stores data; it does not provide the broader customer-management process the group needs."
+    },
+    {
+        scenario: "A campus coffee shop owner checks a dashboard each morning that shows sales by hour, most popular drinks, average order value, and which promotions led to repeat visits. She uses that information to decide staffing and which breakfast deals to push next week. The system does not process orders itself; it mainly helps her analyze patterns.",
+        question: "Which concept best describes the system she is using?",
+        options: [
+            "A. Middleware because it connects software behind the scenes",
+            "B. BI system because it helps analyze data for decisions",
+            "C. ERP system because it handles all company functions together",
+            "D. GUI because it uses charts and visual buttons on a screen"
+        ],
+        correct: 1,
+        explanation: "A BI system is correct because the main purpose is turning data into insight for decisions such as staffing and promotions. A is wrong because middleware is about connecting systems, not primarily analyzing results. C is wrong because ERP integrates core business processes, while the scenario highlights analysis rather than full operational integration. D is wrong because a GUI is just the interface style, not the business purpose of the system."
+    },
+    {
+        scenario: "A small clothing startup uses one software package for payroll, inventory, purchasing, and accounting. When a manager records a sale, inventory drops automatically and the accounting team can see the revenue right away. Before this change, each department kept separate records and often argued about which numbers were correct.",
+        question: "Which type of system is MOST clearly being described?",
+        options: [
+            "A. A CRM system because it improves customer communication",
+            "B. An SCM system because it focuses only on suppliers and delivery",
+            "C. An ERP system because it integrates major business functions",
+            "D. A GUI because employees can enter data with visual screens"
+        ],
+        correct: 2,
+        explanation: "ERP is correct because the scenario shows accounting, inventory, purchasing, and payroll connected in one shared system. A is wrong because CRM focuses on customer interactions, which is not the main issue here. B is too narrow because SCM centers on supply chain flow rather than the full internal integration shown. D confuses the look of the software with the actual business role of the system."
+    },
+    {
+        scenario: "A student-led resale app keeps crashing when too many users search at the same time during move-out week. The developers decide to split the workload across several servers so no single machine handles every request. After that change, the app can support more users at once and outages are less common.",
+        question: "Which concept best explains this improvement?",
+        options: [
+            "A. Distributed computing because the workload is shared across machines",
+            "B. Middleware because the app now has a visual layer for users",
+            "C. CRM because the company can respond faster to messages",
+            "D. Operating systems because one computer runs more programs at once"
+        ],
+        correct: 0,
+        explanation: "Distributed computing is correct because the key change is spreading work across multiple computers. B is wrong because middleware connects systems, while the issue here is load sharing and scale. C is wrong because customer management is not the source of the improvement. D is incomplete because the problem was solved by using several machines together, not by relying on one operating system."
+    },
+    {
+        scenario: "An internship supervisor tells you that the company's online store, shipping system, and billing software all use different formats, so customer orders often fail to move cleanly from one system to another. The company adds a software layer that translates data and lets the systems exchange updates automatically. Order errors drop right away.",
+        question: "Which technology MOST likely created that improvement?",
+        options: [
+            "A. A DBMS because it organizes data into tables",
+            "B. Middleware because it helps different systems communicate",
+            "C. A GUI because it makes the screens easier to use",
+            "D. An operating system because it controls processor time"
+        ],
+        correct: 1,
+        explanation: "Middleware is correct because it sits between systems and helps them exchange data in compatible ways. A is wrong because a DBMS manages a database, but the problem is cross-system communication. C is wrong because interface design does not solve data translation problems between systems. D is wrong because operating systems manage hardware and resources, not business-system integration across platforms."
+    },
+    {
+        scenario: "A tutoring startup keeps student records such as names, schedules, payments, and tutor notes. The founder wants employees to search records quickly, update them safely, and control who can view sensitive information. She does not want the team editing random spreadsheets forever.",
+        question: "Which technology is MOST essential for managing that data well?",
+        options: [
+            "A. An SCM system because tutoring depends on scheduling flows",
+            "B. A GUI because staff need screens with menus and buttons",
+            "C. A CRM system because students are like customers",
+            "D. A DBMS because it controls storage, retrieval, and access to data"
+        ],
+        correct: 3,
+        explanation: "A DBMS is correct because the core need is structured storage, secure retrieval, updates, and access control for data. A is wrong because SCM is about the movement of goods and information across a supply chain. B is only about how users interact with the system, not how the underlying data is managed. C could help with relationship tracking, but the most essential data-management layer described is the DBMS."
+    },
+    {
+        scenario: "A new campus event app looks clean, but many students still get confused because the buttons are tiny, the menus are hard to follow, and the map takes too many steps to open. The technical team says the app works correctly in the background. The main problem is how students interact with it on the screen.",
+        question: "Which concept best identifies the problem area?",
+        options: [
+            "A. The GUI because the visual interaction design is poor",
+            "B. The operating system because the phone battery drains fast",
+            "C. The ERP because the app lacks accounting integration",
+            "D. The DBMS because event data is stored in tables"
+        ],
+        correct: 0,
+        explanation: "The GUI is correct because the issue is about buttons, menus, and screen flow, which are part of the graphical user interface. B is wrong because the scenario is not mainly about device resource management. C is unrelated because ERP integration is not the cause of user confusion in the app. D is wrong because stored data structure does not explain why the interface feels difficult to use."
+    },
+    {
+        scenario: "A growing snack company buys ingredients from suppliers, sends products to warehouses, and then ships them to grocery stores around Texas. Managers want software that helps forecast demand, coordinate shipments, and monitor inventory from supplier to shelf. Their biggest pain point is product flow, not payroll or customer service history.",
+        question: "Which type of system would MOST directly support that goal?",
+        options: [
+            "A. A BI system because it shows trend reports after sales happen",
+            "B. An SCM system because it coordinates product movement across the chain",
+            "C. A CRM system because stores are business customers",
+            "D. An operating system because warehouses use scanners and computers"
+        ],
+        correct: 1,
+        explanation: "SCM is correct because the scenario focuses on forecasting demand, coordinating shipments, and monitoring inventory across suppliers, warehouses, and stores. A is too limited because BI analyzes information, but SCM manages the actual flow and coordination process. C is plausible but wrong because the main challenge is not relationship tracking. D confuses the computers used in the process with the business system needed to manage the chain."
+    },
+    {
+        scenario: "A startup founder says her app became much more valuable after outside developers began building add-ons, payment tools, and scheduling plugins for it. As more users joined, more developers wanted to create complements, and those complements attracted even more users. She says the software's success depends on the wider network around it, not just the code she wrote.",
+        question: "Which concept BEST explains her view?",
+        options: [
+            "A. A DBMS because every ecosystem needs structured data tables",
+            "B. Konana's Model of the Software Ecosystem because value comes from the broader network of actors and complements",
+            "C. Middleware because plugins help software pass messages across systems",
+            "D. ERP because integrated software becomes harder to replace"
+        ],
+        correct: 1,
+        explanation: "Konana's Model of the Software Ecosystem is correct because the founder is describing value created by users, developers, complements, and platform relationships. A is wrong because the issue is not mainly data storage. C is too narrow because middleware may support connections, but it does not explain the ecosystem logic of mutual reinforcement. D is wrong because ERP integration is not the main idea in this scenario."
+    },
+    {
+        scenario: "A student keeps saying that Microsoft Word, Zoom, and Spotify are all examples of operating systems because they run on a laptop. His classmate explains that they depend on something deeper that manages hardware, files, and memory for the whole device. The misunderstanding is causing confusion in study group discussions.",
+        question: "Which response would MOST accurately correct the student?",
+        options: [
+            "A. They are examples of middleware because they link devices across the internet",
+            "B. They are examples of applications because they perform specific user tasks",
+            "C. They are examples of ERP because they help users organize information",
+            "D. They are examples of BI because they display information on screens"
+        ],
+        correct: 1,
+        explanation: "Applications is correct because Word, Zoom, and Spotify each help users perform specific tasks. A is wrong because middleware is a behind-the-scenes connector between systems, not a label for general end-user software. C is wrong because ERP refers to integrated enterprise systems, not common consumer or student tools. D is wrong because BI has a decision-analysis purpose, which does not describe all of these programs."
+    },
+    {
+        scenario: "A company builds a website where customers can place custom cake orders. The website looks simple, but behind the scenes the order must move into the bakery's scheduling tool, billing system, and delivery app. The manager wants the customer-facing tool to stay separate while still connecting smoothly to the other systems.",
+        question: "Which choice BEST distinguishes the front-end tool from the back-end connector role?",
+        options: [
+            "A. The website is middleware, while the billing system is a GUI",
+            "B. The website is a DBMS, while the delivery app is an operating system",
+            "C. The website is an application, while middleware can connect it to other systems",
+            "D. The website is an ERP, while distributed computing stores the cake recipes"
+        ],
+        correct: 2,
+        explanation: "The website is an application because it performs a user-facing task, while middleware can connect it to billing, scheduling, and delivery systems. A reverses the concepts and confuses interface with connector software. B mislabels both the website and delivery app. D is wrong because ERP is a broad integrated enterprise system, which is not what the scenario says the website is."
+    },
+    {
+        scenario: "During registration week, UT students use a portal that lets them sign up for classes, view tuition balances, update contact information, and check financial aid. Students only see one unified site, but many parts of the university are feeding information into it. The IT team says the visual design matters because users must complete tasks quickly without confusion.",
+        question: "Which concept is MOST directly tied to that visual design concern?",
+        options: [
+            "A. The GUI because it shapes how users see and navigate the portal",
+            "B. The DBMS because it stores records behind the portal",
+            "C. The SCM system because students move through a process flow",
+            "D. The ERP system because multiple functions exist in one environment"
+        ],
+        correct: 0,
+        explanation: "The GUI is correct because the question asks specifically about visual design and task completion on the screen. B is important to data storage, but it does not describe the student-facing design problem. C is wrong because this is not a supply chain setting. D may describe the integrated nature of the portal, but the direct concern named is user interaction, which points to the GUI."
+    },
+    {
+        scenario: "A local business has separate software for marketing emails, customer service tickets, and sales leads. Managers are frustrated because each team sees only part of the customer's history. They want a system that helps them see all customer touchpoints so they can improve follow-up and keep more buyers coming back.",
+        question: "Which system would MOST likely meet that need?",
+        options: [
+            "A. An SCM system because it connects product movement to store shelves",
+            "B. A CRM system because it combines customer information across interactions",
+            "C. A DBMS because it removes the need for user-focused workflows",
+            "D. A BI system because it creates summary charts after campaigns end"
+        ],
+        correct: 1,
+        explanation: "CRM is correct because the goal is a full view of customer touchpoints across marketing, sales, and service. A is wrong because supply chain coordination is not the issue. C is tempting because data matters, but the firm wants customer-centered processes, not just raw storage. D could help analyze outcomes, but it would not by itself unify the relationship history needed for action."
+    },
+    {
+        scenario: "A startup founder says her company finally stopped arguing about numbers once inventory, purchasing, HR, and accounting moved into the same shared system. Now each department still has its own tasks, but everyone works from the same data and process rules. She believes this reduced duplicate work and improved coordination.",
+        question: "Why is an ERP system the BEST label for this scenario?",
+        options: [
+            "A. Because ERP focuses on customers and service follow-up",
+            "B. Because ERP mainly creates dashboards for managers",
+            "C. Because ERP integrates core business functions into one platform",
+            "D. Because ERP only handles suppliers and delivery routes"
+        ],
+        correct: 2,
+        explanation: "ERP is correct because the scenario highlights shared data and coordinated processes across inventory, purchasing, HR, and accounting. A describes CRM, not ERP. B describes BI systems, which emphasize analysis rather than integration of operations. D describes SCM, which is narrower than the cross-functional system in the scenario."
+    },
+    {
+        scenario: "An online tutoring platform serves students in several states. To keep video lessons smooth, the company uses servers in multiple locations rather than sending every request to one central machine. The goal is to reduce delays and keep service reliable during peak evening hours.",
+        question: "Which concept BEST explains that design choice?",
+        options: [
+            "A. Distributed computing because the work is spread across multiple systems",
+            "B. GUI because users can click links from more than one location",
+            "C. CRM because students can contact tutors through the platform",
+            "D. DBMS because student records need to be searchable"
+        ],
+        correct: 0,
+        explanation: "Distributed computing is correct because the company spreads computing tasks across multiple servers to improve performance and reliability. B is wrong because interface design is not the main issue. C is irrelevant because customer interaction is not what explains the server setup. D may still be used somewhere in the platform, but the scenario is specifically about distributing processing work."
+    },
+    {
+        scenario: "A manager says, 'Our order app, payment app, and shipping app all work fine by themselves, but they struggle to exchange information.' Another employee replies, 'We do not need to replace all of them. We need software that helps them pass data back and forth.' The manager agrees.",
+        question: "What software category is the employee MOST likely recommending?",
+        options: [
+            "A. Operating systems because they make each app start faster",
+            "B. Middleware because it links separate systems together",
+            "C. BI systems because they summarize cross-app performance",
+            "D. CRM systems because customers expect fast updates"
+        ],
+        correct: 1,
+        explanation: "Middleware is correct because it helps separate applications communicate and exchange data. A is wrong because operating systems manage device resources, not business-to-business data flow between applications. C is wrong because BI analyzes information after the fact rather than solving the integration problem itself. D is wrong because CRM may use the information, but it does not describe the connector software needed here."
+    },
+    {
+        scenario: "A student app developer says, 'My phone runs iOS, and on top of that I run apps like Canvas, Spotify, and Maps.' Her friend asks why that distinction matters. She explains that one layer manages the phone itself, while the other layer performs specific tasks for users.",
+        question: "Which pairing BEST matches her explanation?",
+        options: [
+            "A. GUI and DBMS",
+            "B. ERP and SCM",
+            "C. Operating system and application",
+            "D. CRM and BI system"
+        ],
+        correct: 2,
+        explanation: "Operating system and application is correct because iOS manages device resources while apps perform user tasks. A is wrong because GUI is just one style of interface and DBMS manages data. B and D list business systems that do not fit the phone-layer example. The scenario is specifically distinguishing the foundational software layer from user-task software."
+    },
+    {
+        scenario: "A retailer has strong sales data, but managers complain they still cannot answer simple questions quickly, such as which product categories have the highest margins or which stores are underperforming this month. The company installs dashboards, reporting tools, and trend analysis features on top of its stored data. After that, managers make decisions faster.",
+        question: "Which concept BEST matches the new capabilities?",
+        options: [
+            "A. BI systems because they turn stored data into decision support",
+            "B. SCM systems because they improve inventory movement",
+            "C. CRM systems because they record customer service history",
+            "D. Middleware because they connect front-end and back-end apps"
+        ],
+        correct: 0,
+        explanation: "BI systems is correct because the new tools focus on dashboards, reports, and analysis for decision-making. B is wrong because inventory flow is not the main issue in the question. C is wrong because the problem is broader management analysis, not customer interactions. D is wrong because connection between systems is not the main capability being added."
+    },
+    {
+        scenario: "A mobile payment platform becomes more useful as more merchants accept it and more app developers build features around it. Because of that growth, users are less likely to leave, and outside partners have more reason to support the platform. A professor says this shows that software advantage often depends on an ecosystem, not just one firm acting alone.",
+        question: "Which concept provides the BEST lens for understanding this platform's strength?",
+        options: [
+            "A. A DBMS because shared data records create loyalty",
+            "B. Konana's Model of the Software Ecosystem because value comes from interconnected participants and complements",
+            "C. An ERP system because one platform should run every internal department",
+            "D. A GUI because simple screens increase customer adoption"
+        ],
+        correct: 1,
+        explanation: "Konana's Model of the Software Ecosystem is correct because the platform gains value through users, merchants, developers, and complementary features. A is too narrow and misses the networked relationships at work. C is wrong because ERP refers to internal enterprise integration, not a market ecosystem. D may help adoption, but the professor's point is about the broader software network, not only screen design."
+    },
+    {
+        scenario: "A business owner tells her team, 'We already have lots of software. The real question is which system helps with which business problem.' She points to one tool that manages customer histories, another that handles shared internal functions, and another that supports product movement from suppliers to stores. She wants interns to stop mixing up those categories.",
+        question: "Which matching of system to business problem is MOST accurate?",
+        options: [
+            "A. CRM for customer interactions, ERP for internal integration, SCM for product flow",
+            "B. CRM for supplier coordination, ERP for screen design, SCM for user contact history",
+            "C. CRM for operating hardware, ERP for customer service, SCM for payroll records",
+            "D. CRM for dashboards, ERP for app translation, SCM for operating phones"
+        ],
+        correct: 0,
+        explanation: "A is correct because CRM handles customer relationships, ERP integrates core internal functions, and SCM manages the flow of goods and information across the supply chain. B is wrong because it confuses all three categories. C is wrong because those tasks belong to different kinds of systems entirely. D is wrong because dashboards align more with BI, app translation with middleware, and operating phones with operating systems."
+    }
+];
+
+function showTab(id, el) {
+    document.querySelectorAll('.section').forEach(section => section.classList.remove('active'));
+    document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    el.classList.add('active');
+}
+
+function renderVocab() {
+    const container = document.getElementById('vocab-container');
+    container.innerHTML = vocabData.map(item => `
+        <div class="vocab-card">
+            <h3>${item.term}</h3>
+            <span class="label">Exact Definition</span>
+            <p>${item.exact}</p>
+            <span class="label">Simple Definition</span>
+            <p>${item.simple}</p>
+            <div class="example-box">
+                <span class="label" style="margin-top:0">Example</span>
+                ${item.example}
+            </div>
+        </div>
+    `).join('');
+}
+
+function filterVocab() {
+    const query = document.getElementById('search').value.toLowerCase();
+    const cards = document.querySelectorAll('.vocab-card');
+    cards.forEach(card => {
+        card.style.display = card.innerText.toLowerCase().includes(query) ? 'block' : 'none';
+    });
+}
+
+function renderQuiz() {
+    const container = document.getElementById('quiz-container');
+    container.innerHTML = quizData.map((item, i) => `
+        <div class="q-card" id="q${i}">
+            <div class="q-number">${i + 1}.</div>
+            <p class="scenario">${item.scenario}</p>
+            <p class="question-line">${item.question}</p>
+            ${item.options.map((opt, oi) => `
+                <button class="option" onclick="checkAnswer(${i}, ${oi})">${opt}</button>
+            `).join('')}
+            <div class="answer-block" id="exp${i}">
+                <p><strong>Correct answer:</strong> ${String.fromCharCode(65 + item.correct)}</p>
+                <p><strong>Explanation:</strong> ${item.explanation}</p>
+            </div>
+        </div>
+    `).join('');
+}
+
+function checkAnswer(qIdx, oIdx) {
+    const q = quizData[qIdx];
+    const card = document.getElementById(`q${qIdx}`);
+    const options = card.querySelectorAll('.option');
+    const exp = document.getElementById(`exp${qIdx}`);
+
+    options.forEach(btn => btn.disabled = true);
+
+    if (oIdx === q.correct) {
+        options[oIdx].classList.add('correct');
+        exp.style.background = "rgba(35, 134, 54, 0.12)";
+    } else {
+        options[oIdx].classList.add('wrong');
+        options[q.correct].classList.add('correct');
+        exp.style.background = "rgba(218, 54, 51, 0.12)";
+    }
+
+    exp.style.display = "block";
+}
+
+renderVocab();
+renderQuiz();
+</script>
+
+</body>
+</html>
